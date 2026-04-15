@@ -1,90 +1,66 @@
-# Obsidian Sample Plugin
+# Instant Diary for Obsidian
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+Instant Diary は、Obsidian上で日記をゼロクリックで簡単に作成・管理するためのプラグインです。
+自動的なフォルダ・ファイル作成、日またぎの自動処理、便利な管理ビューなどを提供し、書くことに集中できる環境を作ります。
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## 主な機能
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+- **日記の自動作成・表示**: Obsidian起動時や日付が変わったタイミングで、その日の日記を自動で作成・表示できます。
+- **管理ビュー**: 過去の日記を一覧できる専用ビューを提供します。リボンアイコンから簡単にアクセスできます。サイドバーではサイドバーに最適化されます。
+- **自動的なファイル・フォルダ整理**: 指定したフォルダ内に「年/月/日」の構造でファイルを自動的に整理します（詳細は「ファイル管理の仕様」を参照）。
+- **テンプレート対応**: 日記作成時に指定したテンプレートファイルを自動適用できます。
+- **多言語対応**: 英語と日本語の管理・設定UIに対応しています。
 
-## First time developing plugins?
+## インストール方法
 
-Quick starting guide for new plugin devs:
+### Obsidianのコミュニティプラグインから（予定）
+※現在コミュニティプラグインへの登録準備中です。
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+### 手動インストール（BRATなどを使用するか、手動で配置）
+1. [リリースページ](https://github.com/your-repo/instant-diary/releases) から最新のリリースをダウンロードします。
+2. `main.js`, `styles.css`, `manifest.json` をVaultの `<VaultFolder>/.obsidian/plugins/instant-diary/` フォルダ内にコピーします。
+3. Obsidianの設定 > コミュニティプラグイン から「Instant Diary」を有効にします。
 
-## Releasing new releases
+## ファイル管理の仕様
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+本プラグインは、ユーザーが指定した**ルートフォルダ**（デフォルト: `diary`）を起点として、以下のルールでファイルを管理・整理します。
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+1. **ファイル名と作成場所**
+   - 日記ファイルは `YYYY-MM-DD.md` の形式で、該当月のフォルダ `YYYY-MM` 内に作成されます。
+   - 例: `diary/2026-04/2026-04-15.md`（日付の後にタイトルを自由につけられます。）
+2. **同日の複数ファイル対応**
+   - 同日に手動で新しく日記を作成した場合、自動的に連番が追加されます。
+   - 例: `2026-04-15 (2).md`
+3. **過去の年の自動アーカイブ機能**
+   - 年が変わると、前年以前の `YYYY-MM` フォルダは自動的に `YYYY`（年）フォルダの配下へ移動し整理されます。
+   - 例: `diary/2025-12/` → `diary/2025/2025-12/` に自動移動。
+   - これにより、ルートフォルダ内が数年分の月フォルダで散らかるのを防ぎます。
 
-## Adding your plugin to the community plugin list
+## コマンド
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+コマンドパレットから以下のコマンドを利用できます。
 
-## How to use
+- **`Open Diary Management` (管理ビューを開く)**: 日記のカレンダーや一覧を確認できる専用ビューを開きます。
+- **`Create Today's Diary` (今日の日記を作成)**: 今日の日記を作成します（すでに存在する場合はそれを開きます）。
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+## 設定項目 (Settings)
 
-## Manually installing the plugin
+- **言語 (Language)**: プラグインの表示言語（英語/日本語）。
+- **起動時に自動作成 (Auto Create Diary)**: Obsidian起動時（および日またぎ時）に今日の日記を自動で作成し開きます。
+- **自動的に開く (Auto Open Today's Diary)**: 起動時に今日の日記ファイルを自動的に開きます。
+- **起動時に管理画面を開く (Auto Open Management View)**: 起動時に日記管理ビューを自動的に開きます。
+- **開き方 (Open Style)**: 日記を開く際のスタイル（現在のタブ、新しいタブ、右に分割、下に分割、新しいウィンドウ）を選択できます。
+- **ルートフォルダ (Root Folder)**: 日記ファイルを保存する親フォルダのパスを指定します。
+- **テンプレートファイル (Template File)**: 新規作成時に使用するテンプレートファイルのパス（例: `templates/diary-template.md`）。
+- **フォントサイズ (Font Size)**: 管理ビューの表示フォントサイズを調整します。
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+## 開発向け情報
 
-## Improve code quality with eslint
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
+- `npm i`: 依存パッケージのインストール
+- `npm run dev`: 開発モードでのビルド（自動コンパイル）
+- `npm run build`: 本番ビルド
+- `npm run lint`: ESLintによるコードチェック
 
-## Funding URL
+## ライセンス
 
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://docs.obsidian.md
+[MIT License](LICENSE)
