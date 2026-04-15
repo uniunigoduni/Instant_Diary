@@ -46,6 +46,12 @@ The following commands are available from the Command Palette:
 - **Template File**: Path to the template file to use when creating a new diary (e.g., `templates/diary-template.md`).
 - **Font Size**: Adjusts the display font size of the management view.
 
+## Author
+
+uniunigoduni
+
+https://github.com/uniunigoduni
+
 ## License
 
 [MIT License](LICENSE)
