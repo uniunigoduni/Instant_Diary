@@ -1,4 +1,4 @@
-import { App, Plugin, WorkspaceLeaf, Notice, moment, TFile } from 'obsidian';
+import { Plugin, WorkspaceLeaf, moment, TFile } from 'obsidian';
 import { DEFAULT_SETTINGS, InstantDiarySettings, InstantDiarySettingTab } from "./settings";
 import { InstantDiaryView, INSTANT_DIARY_VIEW_TYPE } from "./view";
 import { createTodayDiary, manageOldYearFolders, openFile } from "./diary";
@@ -14,7 +14,7 @@ export default class InstantDiaryPlugin extends Plugin {
 
 		// Move old year folders
 		this.app.workspace.onLayoutReady(() => {
-			(async () => {
+			void (async () => {
 				await manageOldYearFolders(this.app, this);
 
 				// Auto open management page first
@@ -29,7 +29,7 @@ export default class InstantDiaryPlugin extends Plugin {
 
 		// Check for date change every minute
 		this.registerInterval(window.setInterval(() => {
-			(async () => {
+			void (async () => {
 				const currentDate = moment().format("YYYY-MM-DD");
 				if (currentDate !== this.lastCheckedDate) {
 					this.lastCheckedDate = currentDate;
@@ -51,16 +51,16 @@ export default class InstantDiaryPlugin extends Plugin {
 
 		// Command Palette
 		this.addCommand({
-			id: 'open-instant-diary-view',
-			name: 'Open Diary Management',
+			id: 'open-view',
+			name: 'Open diary management',
 			callback: () => {
 				void this.activateView();
 			}
 		});
 
 		this.addCommand({
-			id: 'create-today-diary',
-			name: 'Create Today\'s Diary',
+			id: 'create-today',
+			name: 'Create today\'s diary',
 			callback: () => {
 				void createTodayDiary(this.app, this, true);
 			}
@@ -77,13 +77,13 @@ export default class InstantDiaryPlugin extends Plugin {
 		const leaves = workspace.getLeavesOfType(INSTANT_DIARY_VIEW_TYPE);
 
 		if (leaves.length > 0) {
-			leaf = leaves[0] as WorkspaceLeaf;
+			leaf = leaves[0] || null;
 		} else {
-			leaf = workspace.getLeaf(true) as WorkspaceLeaf; // new tab
+			leaf = workspace.getLeaf(true); // new tab
 			await leaf.setViewState({ type: INSTANT_DIARY_VIEW_TYPE, active: true });
 		}
 
-		if (leaf) workspace.revealLeaf(leaf);
+		if (leaf) void workspace.revealLeaf(leaf);
 	}
 
 	async checkAndProcessTodayDiary() {
@@ -108,7 +108,8 @@ export default class InstantDiaryPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		const data = await this.loadData() as Partial<InstantDiarySettings> | null;
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, data);
 	}
 
 	async saveSettings() {

@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf, Notice, TFile, moment, TFolder, Setting } from "obsidian";
+import { ItemView, WorkspaceLeaf, TFile, moment, TFolder, Setting } from "obsidian";
 import type InstantDiaryPlugin from "./main";
 import { t } from "./i18n";
 import { createNewDiaryManually } from "./diary";

@@ -111,7 +111,7 @@ export class InstantDiarySettingTab extends PluginSettingTab {
 			.setDesc(t("setting_rootfolder_desc", this.plugin.settings.language))
 			.addText((text) => {
 				text
-					.setPlaceholder("myjourney/diary")
+					.setPlaceholder("Myjourney/diary")
 					.setValue(this.plugin.settings.rootFolder)
 					.onChange(async (value) => {
 						this.plugin.settings.rootFolder = value;
