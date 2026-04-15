@@ -2,7 +2,7 @@
 
 [日本語版 (Japanese Version)](README-ja.md)
 
-Instant Diary is a plugin for Obsidian that allows you to easily create and manage your diary with zero clicks.
+Create and manage diary entries instantly with zero clicks.
 It provides an environment where you can focus on writing by offering automatic folder/file creation, automatic handling of day-rollovers, and a convenient management view.
 
 ## Key Features
