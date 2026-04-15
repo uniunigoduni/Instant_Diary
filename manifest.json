@@ -1,7 +1,7 @@
 {
 	"id": "instant-diary",
 	"name": "Instant Diary",
-	"version": "1.0.0",
+	"version": "1.0.5",
 	"minAppVersion": "1.4.0",
 	"description": "Zero-click! Instantly create and manage diary entries with zero clicks.",
 	"author": "uniunigoduni",
