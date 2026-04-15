@@ -1,6 +1,7 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import InstantDiaryPlugin from "./main";
 import { t } from "./i18n";
+import { InstantDiaryView, INSTANT_DIARY_VIEW_TYPE } from "./view";
 
 export interface InstantDiarySettings {
 	language: "en" | "ja";
@@ -99,7 +100,7 @@ export class InstantDiarySettingTab extends PluginSettingTab {
 					.addOption("split-down", t("openstyle_split_down", this.plugin.settings.language))
 					.addOption("new-window", t("openstyle_new_window", this.plugin.settings.language))
 					.setValue(this.plugin.settings.openStyle)
-					.onChange(async (value: any) => {
+					.onChange(async (value: "current" | "new-tab" | "split-right" | "split-down" | "new-window") => {
 						this.plugin.settings.openStyle = value;
 						await this.plugin.saveSettings();
 					});
@@ -136,13 +137,13 @@ export class InstantDiarySettingTab extends PluginSettingTab {
 			.setName(t("setting_fontsize_name", this.plugin.settings.language))
 			.setDesc(t("setting_fontsize_desc", this.plugin.settings.language));
 
-		const previewContainer = fontSizeSetting.controlEl.createDiv();
-		previewContainer.style.marginRight = "16px";
-		previewContainer.style.display = "flex";
-		previewContainer.style.alignItems = "center";
+		const previewContainer = fontSizeSetting.controlEl.createDiv({ cls: "instant-diary-preview-container" });
 
-		const previewText = previewContainer.createSpan({ text: t("fontsize_preview", this.plugin.settings.language) });
-		previewText.style.fontSize = `${this.plugin.settings.fontSize}px`;
+		const previewText = previewContainer.createSpan({
+			text: t("fontsize_preview", this.plugin.settings.language),
+			cls: "instant-diary-preview-text"
+		});
+		previewText.style.setProperty('--instant-diary-font-size', `${this.plugin.settings.fontSize}px`);
 
 		fontSizeSetting.addSlider((slider) => {
 			slider
@@ -151,15 +152,14 @@ export class InstantDiarySettingTab extends PluginSettingTab {
 				.setDynamicTooltip()
 				.onChange(async (value) => {
 					this.plugin.settings.fontSize = value;
-					previewText.style.fontSize = `${value}px`;
+					previewText.style.setProperty('--instant-diary-font-size', `${value}px`);
 					await this.plugin.saveSettings();
 
 					// Update existing views immediately
-					const leaves = this.app.workspace.getLeavesOfType("instant-diary-view");
+					const leaves = this.app.workspace.getLeavesOfType(INSTANT_DIARY_VIEW_TYPE);
 					for (const leaf of leaves) {
-						const view = leaf.view as any;
-						if (view && view.contentEl) {
-							view.contentEl.style.fontSize = `${value}px`;
+						if (leaf.view instanceof InstantDiaryView) {
+							leaf.view.updateFontSize(value);
 						}
 					}
 				});

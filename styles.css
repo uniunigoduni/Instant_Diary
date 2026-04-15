@@ -3,6 +3,31 @@
 .instant-diary-view {
     padding: 20px;
     container-type: inline-size;
+    font-size: var(--instant-diary-font-size, 16px);
+}
+
+.instant-diary-preview-container {
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.instant-diary-preview-text {
+    font-size: var(--instant-diary-font-size, 16px);
+}
+
+.instant-diary-summary {
+    cursor: pointer;
+}
+
+.instant-diary-stats-summary-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.instant-diary-link {
+    cursor: pointer;
 }
 
 /* Header and Buttons */

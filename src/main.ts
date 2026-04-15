@@ -13,25 +13,29 @@ export default class InstantDiaryPlugin extends Plugin {
 		this.lastCheckedDate = moment().format("YYYY-MM-DD");
 
 		// Move old year folders
-		this.app.workspace.onLayoutReady(async () => {
-			await manageOldYearFolders(this.app, this);
+		this.app.workspace.onLayoutReady(() => {
+			(async () => {
+				await manageOldYearFolders(this.app, this);
 
-			// Auto open management page first
-			if (this.settings.autoOpenManagement) {
-				await this.activateView();
-			}
+				// Auto open management page first
+				if (this.settings.autoOpenManagement) {
+					await this.activateView();
+				}
 
-			// Auto create and open diary after, so it remains active
-			await this.checkAndProcessTodayDiary();
+				// Auto create and open diary after, so it remains active
+				await this.checkAndProcessTodayDiary();
+			})();
 		});
 
 		// Check for date change every minute
-		this.registerInterval(window.setInterval(async () => {
-			const currentDate = moment().format("YYYY-MM-DD");
-			if (currentDate !== this.lastCheckedDate) {
-				this.lastCheckedDate = currentDate;
-				await this.checkAndProcessTodayDiary();
-			}
+		this.registerInterval(window.setInterval(() => {
+			(async () => {
+				const currentDate = moment().format("YYYY-MM-DD");
+				if (currentDate !== this.lastCheckedDate) {
+					this.lastCheckedDate = currentDate;
+					await this.checkAndProcessTodayDiary();
+				}
+			})();
 		}, 60 * 1000));
 
 		// Register View
@@ -41,8 +45,8 @@ export default class InstantDiaryPlugin extends Plugin {
 		);
 
 		// Ribbon Icon
-		this.addRibbonIcon('calendar-days', t("ribbon_icon_name", this.settings.language), (evt: MouseEvent) => {
-			this.activateView();
+		this.addRibbonIcon('calendar-days', t("ribbon_icon_name", this.settings.language), () => {
+			void this.activateView();
 		});
 
 		// Command Palette
@@ -50,15 +54,15 @@ export default class InstantDiaryPlugin extends Plugin {
 			id: 'open-instant-diary-view',
 			name: 'Open Diary Management',
 			callback: () => {
-				this.activateView();
+				void this.activateView();
 			}
 		});
 
 		this.addCommand({
 			id: 'create-today-diary',
 			name: 'Create Today\'s Diary',
-			callback: async () => {
-				await createTodayDiary(this.app, this, true);
+			callback: () => {
+				void createTodayDiary(this.app, this, true);
 			}
 		});
 

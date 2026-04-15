@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf, Notice, TFile, moment, TFolder } from "obsidian";
+import { ItemView, WorkspaceLeaf, Notice, TFile, moment, TFolder, Setting } from "obsidian";
 import type InstantDiaryPlugin from "./main";
 import { t } from "./i18n";
 import { createNewDiaryManually } from "./diary";
@@ -25,13 +25,17 @@ export class InstantDiaryView extends ItemView {
         return "calendar-days";
     }
 
+    updateFontSize(size: number) {
+        this.contentEl.style.setProperty('--instant-diary-font-size', `${size}px`);
+    }
+
     async onOpen() {
         const container = this.contentEl;
         container.empty();
         container.addClass("instant-diary-view");
 
         // Apply font size
-        container.style.fontSize = `${this.plugin.settings.fontSize}px`;
+        this.updateFontSize(this.plugin.settings.fontSize);
 
         const lang = this.plugin.settings.language;
 
@@ -41,14 +45,17 @@ export class InstantDiaryView extends ItemView {
         btn.createSpan({ text: t("create_today", lang) });
         btn.createSpan({ text: ` (${moment().format("YYYY-MM-DD")})`, cls: "instant-diary-btn-date" });
 
-        btn.onclick = async () => {
-            await createNewDiaryManually(this.app, this.plugin);
-            this.renderListsAndStats(contentArea); // Refresh
+        const contentArea = container.createEl("div");
+
+        btn.onclick = () => {
+            void (async () => {
+                await createNewDiaryManually(this.app, this.plugin);
+                await this.renderListsAndStats(contentArea); // Refresh
+            })();
         };
 
         // Placeholder for stats and lists
-        const contentArea = container.createEl("div");
-        this.renderListsAndStats(contentArea);
+        await this.renderListsAndStats(contentArea);
     }
 
     async renderListsAndStats(container: HTMLElement) {
@@ -79,16 +86,13 @@ export class InstantDiaryView extends ItemView {
         // ---- STATS & STREAK ----
         const detailsEl = container.createEl("details", { cls: "instant-diary-section" });
 
-        const summaryEl = detailsEl.createEl("summary");
-        summaryEl.style.cursor = "pointer";
-        const h1Stats = summaryEl.createEl("h1");
-        h1Stats.createSpan({ text: t("diary_stats", lang) });
+        const summaryEl = detailsEl.createEl("summary", { cls: "instant-diary-summary" });
+
+        const h1Stats = summaryEl.createEl("div", { cls: "instant-diary-stats-summary-text" });
+        new Setting(h1Stats).setName(t("diary_stats", lang)).setHeading();
 
         const clickText = lang === "ja" ? "（クリックして表示）" : " (Click to show)";
         h1Stats.createSpan({ text: clickText, cls: "instant-diary-stats-click-text" });
-
-        h1Stats.style.display = "inline";
-        h1Stats.style.marginLeft = "0.2em";
 
         const statsLayout = detailsEl.createEl("div", { cls: "instant-diary-stats-layout" });
 
@@ -149,13 +153,12 @@ export class InstantDiaryView extends ItemView {
 
         // ---- LIST ----
         const listSection = container.createEl("div", { cls: "instant-diary-section" });
-        listSection.createEl("h1", { text: t("diary_list", lang) });
+        new Setting(listSection).setName(t("diary_list", lang)).setHeading();
         const ul = listSection.createEl("ul", { cls: "instant-diary-list" });
 
         for (const f of allDiaryFiles) {
             const li = ul.createEl("li");
-            const a = li.createEl("a", { text: f.basename });
-            a.style.cursor = "pointer";
+            const a = li.createEl("a", { text: f.basename, cls: "instant-diary-link" });
 
             // Prevent auto-scroll mode on middle click
             a.addEventListener("mousedown", (e: MouseEvent) => {
@@ -164,14 +167,18 @@ export class InstantDiaryView extends ItemView {
                 }
             });
 
-            a.onclick = async (e: MouseEvent) => {
-                const newLeaf = e.ctrlKey || e.metaKey;
-                await this.app.workspace.getLeaf(newLeaf).openFile(f, { active: !newLeaf });
+            a.onclick = (e: MouseEvent) => {
+                void (async () => {
+                    const newLeaf = e.ctrlKey || e.metaKey;
+                    await this.app.workspace.getLeaf(newLeaf).openFile(f, { active: !newLeaf });
+                })();
             };
-            a.onauxclick = async (e: MouseEvent) => {
+            a.onauxclick = (e: MouseEvent) => {
                 if (e.button === 1) { // Middle click
                     e.preventDefault();
-                    await this.app.workspace.getLeaf(true).openFile(f, { active: false });
+                    void (async () => {
+                        await this.app.workspace.getLeaf(true).openFile(f, { active: false });
+                    })();
                 }
             };
 
@@ -186,5 +193,6 @@ export class InstantDiaryView extends ItemView {
 
     async onClose() {
         // Nothing to clean up
+        await Promise.resolve();
     }
 }
