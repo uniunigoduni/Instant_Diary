@@ -14,14 +14,14 @@ export default class InstantDiaryPlugin extends Plugin {
 		this.app.workspace.onLayoutReady(async () => {
 			await manageOldYearFolders(this.app, this);
 
-			// Auto create diary if needed
-			if (this.settings.autoCreateDiary) {
-				await createTodayDiary(this.app, this, true);
+			// Auto open management page first
+			if (this.settings.autoOpenManagement) {
+				await this.activateView();
 			}
 
-			// Auto open management page
-			if (this.settings.autoOpenManagement) {
-				this.activateView();
+			// Auto create and open diary after, so it remains active
+			if (this.settings.autoCreateDiary) {
+				await createTodayDiary(this.app, this, true);
 			}
 		});
 
