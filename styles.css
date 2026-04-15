@@ -1,8 +1,173 @@
-/*
+/* Instant Diary Management Page Styles */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.instant-diary-view {
+    padding: 20px;
+}
 
-If your plugin does not need CSS, delete this file.
+/* Header and Buttons */
+.instant-diary-btn-container {
+    display: flex;
+    justify-content: center;
+    margin: 2em 0;
+}
 
-*/
+.instant-diary-btn-container button {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.instant-diary-btn-container button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background-color: var(--interactive-accent-hover);
+}
+
+.instant-diary-btn-container button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Sections */
+.instant-diary-section {
+    background-color: var(--background-secondary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 2em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Summaries and Headings */
+.instant-diary-section summary {
+    outline: none;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.instant-diary-section summary:hover {
+    color: var(--text-accent);
+}
+
+.instant-diary-section h1 {
+    margin-top: 0;
+    border-bottom: 2px solid var(--background-modifier-border);
+    padding-bottom: 8px;
+    color: var(--text-normal);
+}
+
+/* Layout for Stats & Streak */
+.instant-diary-stats-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 1em;
+}
+
+/* Table Styles */
+.instant-diary-month-table {
+    width: auto;
+    min-width: 300px;
+    border-collapse: collapse;
+}
+
+.instant-diary-month-table th {
+    background-color: var(--background-primary-alt);
+    padding: 8px 12px;
+    font-weight: 600;
+    text-align: left;
+    border-bottom: 2px solid var(--background-modifier-border);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.05em;
+}
+
+.instant-diary-month-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--background-modifier-border);
+    color: var(--text-normal);
+    transition: background-color 0.15s ease;
+}
+
+.instant-diary-month-table tr:hover td {
+    background-color: var(--background-primary-alt);
+}
+
+/* Streak Card Styles */
+.instant-diary-streak-card {
+    background-color: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    min-width: 150px;
+}
+
+.instant-diary-streak-title {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+.instant-diary-streak-value {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: var(--interactive-accent);
+    line-height: 1;
+}
+
+.instant-diary-streak-label {
+    font-size: 1em;
+    color: var(--text-normal);
+    margin-left: 4px;
+}
+
+/* List Styles */
+.instant-diary-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.instant-diary-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--background-modifier-border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.instant-diary-list li:last-child {
+    border-bottom: none;
+}
+
+.instant-diary-list li a {
+    font-size: 1.1em;
+    color: var(--text-normal);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.instant-diary-list li a:hover {
+    color: var(--text-accent);
+}
+
+.instant-diary-tag-span {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    background-color: var(--background-secondary-alt);
+    padding: 2px 8px;
+    border-radius: 12px;
+}

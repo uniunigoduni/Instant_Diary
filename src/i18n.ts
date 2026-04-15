@@ -22,11 +22,13 @@ export const en = {
     management_title: "Diary Management",
     create_today: "Create Today's Diary",
     diary_list: "Diary List",
-    diary_stats: "Monthly Stats",
+    diary_stats: "Diary Stats",
     stats_month: "Month",
     stats_count: "Count",
     stats_chars: "Total Chars",
     stats_avg: "Avg Chars",
+    streak_title: "Current Streak",
+    streak_days: "Days",
 };
 
 export const ja = {
@@ -53,11 +55,13 @@ export const ja = {
     management_title: "日記管理",
     create_today: "今日の日記を新規作成",
     diary_list: "日記一覧",
-    diary_stats: "月ごとの日記統計",
+    diary_stats: "日記統計",
     stats_month: "月",
     stats_count: "件数",
     stats_chars: "合計文字数",
     stats_avg: "平均文字数",
+    streak_title: "連続記録日数",
+    streak_days: "日",
 };
 
 export type Lang = "en" | "ja";
