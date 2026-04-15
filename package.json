@@ -1,6 +1,6 @@
 {
 	"name": "instant-diary",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"description": "Zero-click instant diary writing with management view.",
 	"main": "main.js",
 	"type": "module",
