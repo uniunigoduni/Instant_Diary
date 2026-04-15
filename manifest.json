@@ -1,0 +1,11 @@
+{
+	"id": "instant-diary",
+	"name": "Instant Diary",
+	"version": "1.0.0",
+	"minAppVersion": "1.4.0",
+	"description": "Zero-click instant diary writing with management view.",
+	"author": "Instant Diary",
+	"authorUrl": "https://obsidian.md",
+	"fundingUrl": "https://obsidian.md/pricing",
+	"isDesktopOnly": false
+}
