@@ -5,6 +5,7 @@ import { t } from "./i18n";
 export interface InstantDiarySettings {
 	language: "en" | "ja";
 	autoCreateDiary: boolean;
+	autoOpenTodayDiary: boolean;
 	autoOpenManagement: boolean;
 	openStyle: "current" | "new-tab" | "split-right" | "split-down" | "new-window";
 	rootFolder: string;
@@ -14,6 +15,7 @@ export interface InstantDiarySettings {
 export const DEFAULT_SETTINGS: InstantDiarySettings = {
 	language: "en",
 	autoCreateDiary: true,
+	autoOpenTodayDiary: true,
 	autoOpenManagement: false,
 	openStyle: "new-tab",
 	rootFolder: "diary",
@@ -61,6 +63,18 @@ export class InstantDiarySettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
+			.setName(t("setting_autoopentoday_name", this.plugin.settings.language))
+			.setDesc(t("setting_autoopentoday_desc", this.plugin.settings.language))
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.autoOpenTodayDiary)
+					.onChange(async (value) => {
+						this.plugin.settings.autoOpenTodayDiary = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
 			.setName(t("setting_autoopen_name", this.plugin.settings.language))
 			.setDesc(t("setting_autoopen_desc", this.plugin.settings.language))
 			.addToggle((toggle) => {
@@ -94,7 +108,7 @@ export class InstantDiarySettingTab extends PluginSettingTab {
 			.setDesc(t("setting_rootfolder_desc", this.plugin.settings.language))
 			.addText((text) => {
 				text
-					.setPlaceholder("diary")
+					.setPlaceholder("myjourney/diary")
 					.setValue(this.plugin.settings.rootFolder)
 					.onChange(async (value) => {
 						this.plugin.settings.rootFolder = value;

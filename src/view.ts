@@ -78,11 +78,19 @@ export class InstantDiaryView extends ItemView {
         allDiaryFiles.sort((a, b) => b.name.localeCompare(a.name));
 
         // ---- STATS ----
-        container.createEl("h3", { text: t("diary_stats", lang) });
-        const table = container.createEl("table", { cls: "instant-diary-month-table" });
+        const detailsEl = container.createEl("details");
+        detailsEl.style.marginBottom = "2em";
+
+        const summaryEl = detailsEl.createEl("summary");
+        summaryEl.style.cursor = "pointer";
+        const clickText = lang === "ja" ? "（クリックして表示）" : " (Click to show)";
+        const h1 = summaryEl.createEl("h1", { text: t("diary_stats", lang) + clickText });
+        h1.style.display = "inline";
+        h1.style.marginLeft = "0.2em";
+
+        const table = detailsEl.createEl("table", { cls: "instant-diary-month-table" });
         table.style.width = "100%";
         table.style.borderCollapse = "collapse";
-        table.style.marginBottom = "2em";
 
         const trHeader = table.createEl("tr");
         trHeader.createEl("th", { text: t("stats_month", lang) }).style.textAlign = "left";
@@ -114,7 +122,7 @@ export class InstantDiaryView extends ItemView {
         }
 
         // ---- LIST ----
-        container.createEl("h3", { text: t("diary_list", lang) });
+        container.createEl("h1", { text: t("diary_list", lang) });
         const ul = container.createEl("ul");
         ul.style.listStyleType = "none";
         ul.style.paddingLeft = "0";

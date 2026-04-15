@@ -53,6 +53,7 @@ export async function createTodayDiary(app: App, plugin: InstantDiaryPlugin, ope
 
     // Check if today's file exists
     let file = app.vault.getAbstractFileByPath(dailyFilePath) as TFile | null;
+    let justCreated = false;
 
     if (!file) {
         // Check for template
@@ -67,6 +68,7 @@ export async function createTodayDiary(app: App, plugin: InstantDiaryPlugin, ope
 
         try {
             file = await app.vault.create(dailyFilePath, content);
+            justCreated = true;
             new Notice(`Created today's diary: ${today}.md`);
         } catch (e) {
             console.error("Instant Diary: Failed to create diary file", e);
@@ -74,8 +76,13 @@ export async function createTodayDiary(app: App, plugin: InstantDiaryPlugin, ope
         }
     }
 
+    // openAfterCreate determines if we open the file.
+    // If justCreated is true, we always open it (if openAfterCreate is true, which it is from main.ts).
+    // If it already existed, we only open it if autoOpenTodayDiary is true.
     if (openAfterCreate && file) {
-        await openFile(app, plugin, file);
+        if (justCreated || plugin.settings.autoOpenTodayDiary) {
+            await openFile(app, plugin, file);
+        }
     }
 }
 

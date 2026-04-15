@@ -2,7 +2,9 @@ export const en = {
     setting_language_name: "Language",
     setting_language_desc: "Choose the display language for the plugin.",
     setting_autocreate_name: "Auto-create Diary",
-    setting_autocreate_desc: "Automatically create today's diary if it doesn't exist when Obsidian starts.",
+    setting_autocreate_desc: "Automatically create and open today's diary if it doesn't exist.",
+    setting_autoopentoday_name: "Auto-open Today's Diary",
+    setting_autoopentoday_desc: "Automatically open today's diary when Obsidian starts.",
     setting_autoopen_name: "Auto-open Management Page",
     setting_autoopen_desc: "Automatically open the Diary Management page when Obsidian starts.",
     setting_openstyle_name: "Diary Open Style",
@@ -28,10 +30,12 @@ export const en = {
 };
 
 export const ja = {
-    setting_language_name: "言語",
+    setting_language_name: "Language",
     setting_language_desc: "プラグインの表示言語を選択します。",
     setting_autocreate_name: "日記の自動作成",
-    setting_autocreate_desc: "Obsidian起動時に今日の日記が存在しない場合、自動で作成します。",
+    setting_autocreate_desc: "今日の日記が存在しない場合、自動で作成し開きます。",
+    setting_autoopentoday_name: "今日の日記の自動オープン",
+    setting_autoopentoday_desc: "obsidian起動時に、自動で今日の日記を開きます。",
     setting_autoopen_name: "管理ページの自動オープン",
     setting_autoopen_desc: "Obsidian起動時に自動で日記管理ページを開きます。",
     setting_openstyle_name: "自動作成した日記の開き方",
