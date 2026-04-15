@@ -10,6 +10,7 @@ export interface InstantDiarySettings {
 	openStyle: "current" | "new-tab" | "split-right" | "split-down" | "new-window";
 	rootFolder: string;
 	templateFile: string;
+	fontSize: number;
 }
 
 export const DEFAULT_SETTINGS: InstantDiarySettings = {
@@ -20,6 +21,7 @@ export const DEFAULT_SETTINGS: InstantDiarySettings = {
 	openStyle: "new-tab",
 	rootFolder: "diary",
 	templateFile: "",
+	fontSize: 16,
 };
 
 export class InstantDiarySettingTab extends PluginSettingTab {
@@ -128,5 +130,39 @@ export class InstantDiarySettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					});
 			});
+
+		// Font Size Setting with Preview
+		const fontSizeSetting = new Setting(containerEl)
+			.setName(t("setting_fontsize_name", this.plugin.settings.language))
+			.setDesc(t("setting_fontsize_desc", this.plugin.settings.language));
+
+		const previewContainer = fontSizeSetting.controlEl.createDiv();
+		previewContainer.style.marginRight = "16px";
+		previewContainer.style.display = "flex";
+		previewContainer.style.alignItems = "center";
+
+		const previewText = previewContainer.createSpan({ text: t("fontsize_preview", this.plugin.settings.language) });
+		previewText.style.fontSize = `${this.plugin.settings.fontSize}px`;
+
+		fontSizeSetting.addSlider((slider) => {
+			slider
+				.setLimits(10, 40, 1)
+				.setValue(this.plugin.settings.fontSize)
+				.setDynamicTooltip()
+				.onChange(async (value) => {
+					this.plugin.settings.fontSize = value;
+					previewText.style.fontSize = `${value}px`;
+					await this.plugin.saveSettings();
+
+					// Update existing views immediately
+					const leaves = this.app.workspace.getLeavesOfType("instant-diary-view");
+					for (const leaf of leaves) {
+						const view = leaf.view as any;
+						if (view && view.contentEl) {
+							view.contentEl.style.fontSize = `${value}px`;
+						}
+					}
+				});
+		});
 	}
 }

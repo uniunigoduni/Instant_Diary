@@ -30,11 +30,16 @@ export class InstantDiaryView extends ItemView {
         container.empty();
         container.addClass("instant-diary-view");
 
+        // Apply font size
+        container.style.fontSize = `${this.plugin.settings.fontSize}px`;
+
         const lang = this.plugin.settings.language;
 
         // Button to create today's diary
         const btnContainer = container.createEl("div", { cls: "instant-diary-btn-container" });
-        const btn = btnContainer.createEl("button", { text: `${t("create_today", lang)} (${moment().format("YYYY-MM-DD")})` });
+        const btn = btnContainer.createEl("button");
+        btn.createSpan({ text: t("create_today", lang) });
+        btn.createSpan({ text: ` (${moment().format("YYYY-MM-DD")})`, cls: "instant-diary-btn-date" });
 
         btn.onclick = async () => {
             await createNewDiaryManually(this.app, this.plugin);
@@ -76,8 +81,12 @@ export class InstantDiaryView extends ItemView {
 
         const summaryEl = detailsEl.createEl("summary");
         summaryEl.style.cursor = "pointer";
+        const h1Stats = summaryEl.createEl("h1");
+        h1Stats.createSpan({ text: t("diary_stats", lang) });
+
         const clickText = lang === "ja" ? "（クリックして表示）" : " (Click to show)";
-        const h1Stats = summaryEl.createEl("h1", { text: t("diary_stats", lang) + clickText });
+        h1Stats.createSpan({ text: clickText, cls: "instant-diary-stats-click-text" });
+
         h1Stats.style.display = "inline";
         h1Stats.style.marginLeft = "0.2em";
 

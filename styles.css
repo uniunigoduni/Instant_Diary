@@ -2,6 +2,7 @@
 
 .instant-diary-view {
     padding: 20px;
+    container-type: inline-size;
 }
 
 /* Header and Buttons */
@@ -22,6 +23,7 @@
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    white-space: nowrap;
 }
 
 .instant-diary-btn-container button:hover {
@@ -75,8 +77,9 @@
 /* Table Styles */
 .instant-diary-month-table {
     width: auto;
-    min-width: 300px;
+    min-width: 250px;
     border-collapse: collapse;
+    order: 1;
 }
 
 .instant-diary-month-table th {
@@ -111,6 +114,7 @@
     text-align: center;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     min-width: 150px;
+    order: 2;
 }
 
 .instant-diary-streak-title {
@@ -147,6 +151,8 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-wrap: nowrap;
+    overflow: hidden;
 }
 
 .instant-diary-list li:last-child {
@@ -158,10 +164,10 @@
     color: var(--text-normal);
     text-decoration: none;
     transition: color 0.15s ease;
-}
-
-.instant-diary-list li a:hover {
-    color: var(--text-accent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
 }
 
 .instant-diary-tag-span {
@@ -170,4 +176,35 @@
     background-color: var(--background-secondary-alt);
     padding: 2px 8px;
     border-radius: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Container Queries for Narrow Sidebar */
+@container (max-width: 380px) {
+    .instant-diary-btn-date {
+        display: none;
+    }
+
+    .instant-diary-stats-click-text {
+        display: none;
+    }
+
+    .instant-diary-tag-span {
+        display: none;
+    }
+
+    .instant-diary-section {
+        padding: 16px;
+    }
+
+    .instant-diary-month-table {
+        min-width: 100%;
+        order: 2;
+    }
+
+    .instant-diary-streak-card {
+        min-width: 100%;
+        order: 1;
+    }
 }
