@@ -18,5 +18,9 @@ main.js
 # obsidian
 data.json
 
+# AI Assistant Notes
+to ai/
+AGENTS.md
+
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store

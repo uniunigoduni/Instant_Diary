@@ -1,66 +1,51 @@
 # Instant Diary for Obsidian
 
-Instant Diary は、Obsidian上で日記をゼロクリックで簡単に作成・管理するためのプラグインです。
-自動的なフォルダ・ファイル作成、日またぎの自動処理、便利な管理ビューなどを提供し、書くことに集中できる環境を作ります。
+[日本語版 (Japanese Version)](README-ja.md)
 
-## 主な機能
+Instant Diary is a plugin for Obsidian that allows you to easily create and manage your diary with zero clicks.
+It provides an environment where you can focus on writing by offering automatic folder/file creation, automatic handling of day-rollovers, and a convenient management view.
 
-- **日記の自動作成・表示**: Obsidian起動時や日付が変わったタイミングで、その日の日記を自動で作成・表示できます。
-- **管理ビュー**: 過去の日記を一覧できる専用ビューを提供します。リボンアイコンから簡単にアクセスできます。サイドバーではサイドバーに最適化されます。
-- **自動的なファイル・フォルダ整理**: 指定したフォルダ内に「年/月/日」の構造でファイルを自動的に整理します（詳細は「ファイル管理の仕様」を参照）。
-- **テンプレート対応**: 日記作成時に指定したテンプレートファイルを自動適用できます。
-- **多言語対応**: 英語と日本語の管理・設定UIに対応しています。
+## Key Features
 
-## インストール方法
+- **Automatic Diary Creation & Display**: Automatically creates and displays the diary for the current day. With the default settings, it automatically opens when Obsidian starts, allowing you to start writing with zero clicks!
+- **Management View**: Provides a dedicated view to browse past diaries. Easily accessible from the ribbon icon. When opened in the sidebar, the display is optimized for the sidebar!
+- **Automatic File & Folder Organization**: Automatically organizes files within a specified folder in a "Year/Month/Day" structure (see "File Management Specifications" for details).
+- **Template Support**: Can automatically apply a specified template file when creating a diary.
+- **Multilingual Support**: The management and settings UI supports both English and Japanese.
 
-### Obsidianのコミュニティプラグインから（予定）
-※現在コミュニティプラグインへの登録準備中です。
+## File Management Specifications
 
-### 手動インストール（BRATなどを使用するか、手動で配置）
-1. [リリースページ](https://github.com/your-repo/instant-diary/releases) から最新のリリースをダウンロードします。
-2. `main.js`, `styles.css`, `manifest.json` をVaultの `<VaultFolder>/.obsidian/plugins/instant-diary/` フォルダ内にコピーします。
-3. Obsidianの設定 > コミュニティプラグイン から「Instant Diary」を有効にします。
+This plugin manages and organizes files based on the **Root Folder** specified by the user (default: `diary`) according to the following rules:
 
-## ファイル管理の仕様
+1. **File Name and Creation Location**
+   - Diary files are created in the format `YYYY-MM-DD.md` within the corresponding month's folder `YYYY-MM`.
+   - Example: `diary/2026-04/2026-04-15.md` (You can freely add a title after the date.)
+2. **Support for Multiple Files on the Same Day**
+   - If you manually create a new diary on the same day, a sequential number is automatically added.
+   - Example: `2026-04-15 (2).md`
+3. **Automatic Archiving of Past Years**
+   - When the year changes, the previous year's `YYYY-MM` folders are automatically moved and organized under a `YYYY` (Year) folder.
+   - Example: `diary/2025-12/` → automatically moved to `diary/2025/2025-12/`.
+   - This prevents the root folder from being cluttered with several years' worth of month folders.
 
-本プラグインは、ユーザーが指定した**ルートフォルダ**（デフォルト: `diary`）を起点として、以下のルールでファイルを管理・整理します。
+## Commands
 
-1. **ファイル名と作成場所**
-   - 日記ファイルは `YYYY-MM-DD.md` の形式で、該当月のフォルダ `YYYY-MM` 内に作成されます。
-   - 例: `diary/2026-04/2026-04-15.md`（日付の後にタイトルを自由につけられます。）
-2. **同日の複数ファイル対応**
-   - 同日に手動で新しく日記を作成した場合、自動的に連番が追加されます。
-   - 例: `2026-04-15 (2).md`
-3. **過去の年の自動アーカイブ機能**
-   - 年が変わると、前年以前の `YYYY-MM` フォルダは自動的に `YYYY`（年）フォルダの配下へ移動し整理されます。
-   - 例: `diary/2025-12/` → `diary/2025/2025-12/` に自動移動。
-   - これにより、ルートフォルダ内が数年分の月フォルダで散らかるのを防ぎます。
+The following commands are available from the Command Palette:
 
-## コマンド
+- **`Open Diary Management`**: Opens a dedicated view where you can check the diary calendar and list.
+- **`Create Today's Diary`**: Creates today's diary (if it already exists, it opens it).
 
-コマンドパレットから以下のコマンドを利用できます。
+## Settings
 
-- **`Open Diary Management` (管理ビューを開く)**: 日記のカレンダーや一覧を確認できる専用ビューを開きます。
-- **`Create Today's Diary` (今日の日記を作成)**: 今日の日記を作成します（すでに存在する場合はそれを開きます）。
+- **Language**: Display language for the plugin (English/Japanese).
+- **Auto Create Diary**: Automatically creates and opens today's diary when Obsidian starts (and when the day rolls over).
+- **Auto Open Today's Diary**: Automatically opens today's diary file on startup.
+- **Auto Open Management View**: Automatically opens the diary management view on startup.
+- **Open Style**: Select the style for opening the diary (Current tab, New tab, Split right, Split down, New window).
+- **Root Folder**: Specify the path to the parent folder where diary files will be saved.
+- **Template File**: Path to the template file to use when creating a new diary (e.g., `templates/diary-template.md`).
+- **Font Size**: Adjusts the display font size of the management view.
 
-## 設定項目 (Settings)
-
-- **言語 (Language)**: プラグインの表示言語（英語/日本語）。
-- **起動時に自動作成 (Auto Create Diary)**: Obsidian起動時（および日またぎ時）に今日の日記を自動で作成し開きます。
-- **自動的に開く (Auto Open Today's Diary)**: 起動時に今日の日記ファイルを自動的に開きます。
-- **起動時に管理画面を開く (Auto Open Management View)**: 起動時に日記管理ビューを自動的に開きます。
-- **開き方 (Open Style)**: 日記を開く際のスタイル（現在のタブ、新しいタブ、右に分割、下に分割、新しいウィンドウ）を選択できます。
-- **ルートフォルダ (Root Folder)**: 日記ファイルを保存する親フォルダのパスを指定します。
-- **テンプレートファイル (Template File)**: 新規作成時に使用するテンプレートファイルのパス（例: `templates/diary-template.md`）。
-- **フォントサイズ (Font Size)**: 管理ビューの表示フォントサイズを調整します。
-
-## 開発向け情報
-
-- `npm i`: 依存パッケージのインストール
-- `npm run dev`: 開発モードでのビルド（自動コンパイル）
-- `npm run build`: 本番ビルド
-- `npm run lint`: ESLintによるコードチェック
-
-## ライセンス
+## License
 
 [MIT License](LICENSE)
