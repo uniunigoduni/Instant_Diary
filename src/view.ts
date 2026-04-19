@@ -30,9 +30,21 @@ export class InstantDiaryView extends ItemView {
     }
 
     async onOpen() {
+        this.contentEl.addClass("instant-diary-view");
+
+        await this.refresh();
+
+        // Register vault events for automatic updates
+        this.registerEvent(this.app.vault.on('create', () => this.refresh()));
+        this.registerEvent(this.app.vault.on('delete', () => this.refresh()));
+        this.registerEvent(this.app.vault.on('rename', () => this.refresh()));
+    }
+
+    async refresh() {
         const container = this.contentEl;
+        const scrollTop = container.scrollTop;
+
         container.empty();
-        container.addClass("instant-diary-view");
 
         // Apply font size
         this.updateFontSize(this.plugin.settings.fontSize);
@@ -51,7 +63,7 @@ export class InstantDiaryView extends ItemView {
             btn.onclick = () => {
                 void (async () => {
                     await createNewDiaryManually(this.app, this.plugin);
-                    await this.renderListsAndStats(contentArea); // Refresh
+                    // Automatic refresh will be triggered by the vault 'create' event
                 })();
             };
             container.insertBefore(btnContainer, contentArea);
@@ -59,6 +71,11 @@ export class InstantDiaryView extends ItemView {
 
         // Placeholder for stats and lists
         await this.renderListsAndStats(contentArea);
+
+        // Restore scroll position
+        setTimeout(() => {
+            container.scrollTop = scrollTop;
+        }, 0);
     }
 
     async renderListsAndStats(container: HTMLElement) {
@@ -171,7 +188,7 @@ export class InstantDiaryView extends ItemView {
                     .onClick(() => {
                         void (async () => {
                             await createNewDiaryManually(this.app, this.plugin);
-                            await this.renderListsAndStats(container); // Refresh
+                            // Automatic refresh will be triggered by the vault 'create' event
                         })();
                     });
             });
