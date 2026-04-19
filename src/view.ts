@@ -95,12 +95,10 @@ export class InstantDiaryView extends ItemView {
             const h1Stats = summaryEl.createEl("div", { cls: "instant-diary-stats-summary-text" });
             new Setting(h1Stats).setName(t("diary_stats", lang)).setHeading();
 
-            const clickText = lang === "ja" ? "（クリックして表示）" : " (Click to show)";
-            h1Stats.createSpan({ text: clickText, cls: "instant-diary-stats-click-text" });
-
             const statsLayout = detailsEl.createEl("div", { cls: "instant-diary-stats-layout" });
 
-            const table = statsLayout.createEl("table", { cls: "instant-diary-month-table" });
+            const tableWrapper = statsLayout.createEl("div", { cls: "instant-diary-table-wrapper" });
+            const table = tableWrapper.createEl("table", { cls: "instant-diary-month-table" });
 
             const trHeader = table.createEl("tr");
             trHeader.createEl("th", { text: t("stats_month", lang) });
@@ -181,8 +179,28 @@ export class InstantDiaryView extends ItemView {
 
         const ul = listSection.createEl("ul", { cls: "instant-diary-list" });
 
-        for (const f of allDiaryFiles) {
+        for (let i = 0; i < allDiaryFiles.length; i++) {
+            const f = allDiaryFiles[i];
+            if (!f) continue;
+
+            const match = f.name.match(/^(\d{4}-\d{2}-\d{2})/);
+            const currentDateStr = match && match[1] ? match[1] : "";
+
             const li = ul.createEl("li");
+
+            let nextDateStr = "";
+            if (i + 1 < allDiaryFiles.length) {
+                const nextFile = allDiaryFiles[i + 1];
+                if (nextFile) {
+                    const nextMatch = nextFile.name.match(/^(\d{4}-\d{2}-\d{2})/);
+                    nextDateStr = nextMatch && nextMatch[1] ? nextMatch[1] : "";
+                }
+            }
+
+            if (currentDateStr !== nextDateStr) {
+                li.addClass("instant-diary-day-divider");
+            }
+
             const a = li.createEl("a", { text: f.basename, cls: "instant-diary-link" });
 
             // Prevent auto-scroll mode on middle click
