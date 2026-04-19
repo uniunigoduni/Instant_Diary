@@ -51,8 +51,25 @@ export async function createTodayDiary(app: App, plugin: InstantDiaryPlugin, ope
         await app.vault.createFolder(folderPath);
     }
 
-    // Check if today's file exists
-    let file = app.vault.getAbstractFileByPath(dailyFilePath) as TFile | null;
+    // Check if today's file exists (including those with titles like YYYY-MM-DD Title.md)
+    let file: TFile | null = null;
+    const folder = app.vault.getAbstractFileByPath(folderPath);
+    if (folder instanceof TFolder) {
+        for (const child of folder.children) {
+            if (child instanceof TFile && child.name.startsWith(today) && child.extension === "md") {
+                file = child;
+                break;
+            }
+        }
+    }
+
+    if (!file) {
+        const exactFile = app.vault.getAbstractFileByPath(dailyFilePath);
+        if (exactFile instanceof TFile) {
+            file = exactFile;
+        }
+    }
+
     let justCreated = false;
 
     if (!file) {

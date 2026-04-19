@@ -1,4 +1,4 @@
-import { Plugin, WorkspaceLeaf, moment, TFile } from 'obsidian';
+import { Plugin, WorkspaceLeaf, moment, TFile, TFolder } from 'obsidian';
 import { DEFAULT_SETTINGS, InstantDiarySettings, InstantDiarySettingTab } from "./settings";
 import { InstantDiaryView, INSTANT_DIARY_VIEW_TYPE } from "./view";
 import { createTodayDiary, manageOldYearFolders, openFile } from "./diary";
@@ -94,11 +94,29 @@ export default class InstantDiaryPlugin extends Plugin {
 			const today = moment().format("YYYY-MM-DD");
 			const monthFolder = moment().format("YYYY-MM");
 			const rootFolder = this.settings.rootFolder || "diary";
-			const dailyFilePath = `${rootFolder}/${monthFolder}/${today}.md`;
+			const folderPath = `${rootFolder}/${monthFolder}`;
 
-			const file = this.app.vault.getAbstractFileByPath(dailyFilePath);
-			if (file && file instanceof TFile) {
-				await openFile(this.app, this, file);
+			let targetFile: TFile | null = null;
+			const folder = this.app.vault.getAbstractFileByPath(folderPath);
+			if (folder instanceof TFolder) {
+				for (const child of folder.children) {
+					if (child instanceof TFile && child.name.startsWith(today) && child.extension === "md") {
+						targetFile = child;
+						break;
+					}
+				}
+			}
+
+			if (!targetFile) {
+				const dailyFilePath = `${folderPath}/${today}.md`;
+				const file = this.app.vault.getAbstractFileByPath(dailyFilePath);
+				if (file instanceof TFile) {
+					targetFile = file;
+				}
+			}
+
+			if (targetFile) {
+				await openFile(this.app, this, targetFile);
 			}
 		}
 	}
