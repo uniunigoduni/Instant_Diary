@@ -148,7 +148,7 @@ export class InstantDiarySettingTab extends PluginSettingTab {
 						const leaves = this.app.workspace.getLeavesOfType(INSTANT_DIARY_VIEW_TYPE);
 						for (const leaf of leaves) {
 							if (leaf.view instanceof InstantDiaryView) {
-								leaf.view.onOpen(); // Re-render the view
+								void leaf.view.onOpen(); // Re-render the view
 							}
 						}
 					});
