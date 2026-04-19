@@ -40,19 +40,22 @@ export class InstantDiaryView extends ItemView {
         const lang = this.plugin.settings.language;
 
         // Button to create today's diary
-        const btnContainer = container.createEl("div", { cls: "instant-diary-btn-container" });
-        const btn = btnContainer.createEl("button");
-        btn.createSpan({ text: t("create_today", lang) });
-        btn.createSpan({ text: ` (${moment().format("YYYY-MM-DD")})`, cls: "instant-diary-btn-date" });
-
         const contentArea = container.createEl("div");
 
-        btn.onclick = () => {
-            void (async () => {
-                await createNewDiaryManually(this.app, this.plugin);
-                await this.renderListsAndStats(contentArea); // Refresh
-            })();
-        };
+        if (!this.plugin.settings.simpleMode) {
+            const btnContainer = container.createEl("div", { cls: "instant-diary-btn-container" });
+            const btn = btnContainer.createEl("button");
+            btn.createSpan({ text: t("create_today", lang) });
+            btn.createSpan({ text: ` (${moment().format("YYYY-MM-DD")})`, cls: "instant-diary-btn-date" });
+
+            btn.onclick = () => {
+                void (async () => {
+                    await createNewDiaryManually(this.app, this.plugin);
+                    await this.renderListsAndStats(contentArea); // Refresh
+                })();
+            };
+            container.insertBefore(btnContainer, contentArea);
+        }
 
         // Placeholder for stats and lists
         await this.renderListsAndStats(contentArea);
@@ -84,76 +87,98 @@ export class InstantDiaryView extends ItemView {
         allDiaryFiles.sort((a, b) => b.name.localeCompare(a.name));
 
         // ---- STATS & STREAK ----
-        const detailsEl = container.createEl("details", { cls: "instant-diary-section" });
+        if (!this.plugin.settings.simpleMode) {
+            const detailsEl = container.createEl("details", { cls: "instant-diary-section" });
 
-        const summaryEl = detailsEl.createEl("summary", { cls: "instant-diary-summary" });
+            const summaryEl = detailsEl.createEl("summary", { cls: "instant-diary-summary" });
 
-        const h1Stats = summaryEl.createEl("div", { cls: "instant-diary-stats-summary-text" });
-        new Setting(h1Stats).setName(t("diary_stats", lang)).setHeading();
+            const h1Stats = summaryEl.createEl("div", { cls: "instant-diary-stats-summary-text" });
+            new Setting(h1Stats).setName(t("diary_stats", lang)).setHeading();
 
-        const clickText = lang === "ja" ? "（クリックして表示）" : " (Click to show)";
-        h1Stats.createSpan({ text: clickText, cls: "instant-diary-stats-click-text" });
+            const clickText = lang === "ja" ? "（クリックして表示）" : " (Click to show)";
+            h1Stats.createSpan({ text: clickText, cls: "instant-diary-stats-click-text" });
 
-        const statsLayout = detailsEl.createEl("div", { cls: "instant-diary-stats-layout" });
+            const statsLayout = detailsEl.createEl("div", { cls: "instant-diary-stats-layout" });
 
-        const table = statsLayout.createEl("table", { cls: "instant-diary-month-table" });
+            const table = statsLayout.createEl("table", { cls: "instant-diary-month-table" });
 
-        const trHeader = table.createEl("tr");
-        trHeader.createEl("th", { text: t("stats_month", lang) });
-        trHeader.createEl("th", { text: t("stats_count", lang) });
-        trHeader.createEl("th", { text: t("stats_chars", lang) });
-        trHeader.createEl("th", { text: t("stats_avg", lang) });
+            const trHeader = table.createEl("tr");
+            trHeader.createEl("th", { text: t("stats_month", lang) });
+            trHeader.createEl("th", { text: t("stats_count", lang) });
+            trHeader.createEl("th", { text: t("stats_chars", lang) });
+            trHeader.createEl("th", { text: t("stats_avg", lang) });
 
-        const monthly: Record<string, { count: number; chars: number }> = {};
-        const validDates = new Set<string>();
+            const monthly: Record<string, { count: number; chars: number }> = {};
+            const validDates = new Set<string>();
 
-        for (const f of allDiaryFiles) {
-            const match = f.name.match(/^(\d{4}-\d{2}-\d{2})/);
-            if (match && match[1]) {
-                const dateStr = match[1];
-                const content = await this.app.vault.read(f);
+            for (const f of allDiaryFiles) {
+                const match = f.name.match(/^(\d{4}-\d{2}-\d{2})/);
+                if (match && match[1]) {
+                    const dateStr = match[1];
+                    const content = await this.app.vault.read(f);
 
-                if (content.trim().length > 0) {
-                    validDates.add(dateStr);
+                    if (content.trim().length > 0) {
+                        validDates.add(dateStr);
+                    }
+
+                    const ym = dateStr.substring(0, 7);
+                    if (!monthly[ym]) monthly[ym] = { count: 0, chars: 0 };
+                    monthly[ym].count++;
+                    monthly[ym].chars += content.length;
                 }
-
-                const ym = dateStr.substring(0, 7);
-                if (!monthly[ym]) monthly[ym] = { count: 0, chars: 0 };
-                monthly[ym].count++;
-                monthly[ym].chars += content.length;
             }
-        }
 
-        const rows = Object.entries(monthly).sort((a, b) => b[0].localeCompare(a[0]));
-        for (const [ym, data] of rows) {
-            const avg = data.count === 0 ? 0 : Math.round(data.chars / data.count);
-            const tr = table.createEl("tr");
-            tr.createEl("td", { text: ym });
-            tr.createEl("td", { text: data.count.toString() });
-            tr.createEl("td", { text: data.chars.toLocaleString() });
-            tr.createEl("td", { text: avg.toLocaleString() });
-        }
+            const rows = Object.entries(monthly).sort((a, b) => b[0].localeCompare(a[0]));
+            for (const [ym, data] of rows) {
+                const avg = data.count === 0 ? 0 : Math.round(data.chars / data.count);
+                const tr = table.createEl("tr");
+                tr.createEl("td", { text: ym });
+                tr.createEl("td", { text: data.count.toString() });
+                tr.createEl("td", { text: data.chars.toLocaleString() });
+                tr.createEl("td", { text: avg.toLocaleString() });
+            }
 
-        // Calculate Streak
-        let streak = 0;
-        let checkDate = moment().subtract(1, 'days');
-        while (validDates.has(checkDate.format("YYYY-MM-DD"))) {
-            streak++;
-            checkDate.subtract(1, 'days');
-        }
-        if (validDates.has(moment().format("YYYY-MM-DD"))) {
-            streak++;
-        }
+            // Calculate Streak
+            let streak = 0;
+            let checkDate = moment().subtract(1, 'days');
+            while (validDates.has(checkDate.format("YYYY-MM-DD"))) {
+                streak++;
+                checkDate.subtract(1, 'days');
+            }
+            if (validDates.has(moment().format("YYYY-MM-DD"))) {
+                streak++;
+            }
 
-        const streakCard = statsLayout.createEl("div", { cls: "instant-diary-streak-card" });
-        streakCard.createEl("div", { cls: "instant-diary-streak-title", text: t("streak_title", lang) });
-        const streakValueContainer = streakCard.createEl("div");
-        streakValueContainer.createEl("span", { cls: "instant-diary-streak-value", text: streak.toString() });
-        streakValueContainer.createEl("span", { cls: "instant-diary-streak-label", text: t("streak_days", lang) });
+            const streakCard = statsLayout.createEl("div", { cls: "instant-diary-streak-card" });
+            streakCard.createEl("div", { cls: "instant-diary-streak-title", text: t("streak_title", lang) });
+            const streakValueContainer = streakCard.createEl("div");
+            streakValueContainer.createEl("span", { cls: "instant-diary-streak-value", text: streak.toString() });
+            streakValueContainer.createEl("span", { cls: "instant-diary-streak-label", text: t("streak_days", lang) });
+        }
 
         // ---- LIST ----
-        const listSection = container.createEl("div", { cls: "instant-diary-section" });
-        new Setting(listSection).setName(t("diary_list", lang)).setHeading();
+        const listSection = container.createEl("div");
+        if (!this.plugin.settings.simpleMode) {
+            listSection.addClass("instant-diary-section");
+        } else {
+            listSection.addClass("instant-diary-simple-section");
+        }
+
+        const listSetting = new Setting(listSection).setName(t("diary_list", lang)).setHeading();
+
+        if (this.plugin.settings.simpleMode) {
+            listSetting.addButton(cb => {
+                cb.setButtonText("+")
+                    .setTooltip(t("create_today", lang))
+                    .onClick(() => {
+                        void (async () => {
+                            await createNewDiaryManually(this.app, this.plugin);
+                            await this.renderListsAndStats(container); // Refresh
+                        })();
+                    });
+            });
+        }
+
         const ul = listSection.createEl("ul", { cls: "instant-diary-list" });
 
         for (const f of allDiaryFiles) {

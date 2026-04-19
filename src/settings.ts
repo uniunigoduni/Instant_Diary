@@ -12,6 +12,7 @@ export interface InstantDiarySettings {
 	rootFolder: string;
 	templateFile: string;
 	fontSize: number;
+	simpleMode: boolean;
 }
 
 export const DEFAULT_SETTINGS: InstantDiarySettings = {
@@ -23,6 +24,7 @@ export const DEFAULT_SETTINGS: InstantDiarySettings = {
 	rootFolder: "diary",
 	templateFile: "",
 	fontSize: 16,
+	simpleMode: false,
 };
 
 export class InstantDiarySettingTab extends PluginSettingTab {
@@ -129,6 +131,26 @@ export class InstantDiarySettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						this.plugin.settings.templateFile = value;
 						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName(t("setting_simplemode_name", this.plugin.settings.language))
+			.setDesc(t("setting_simplemode_desc", this.plugin.settings.language))
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.simpleMode)
+					.onChange(async (value) => {
+						this.plugin.settings.simpleMode = value;
+						await this.plugin.saveSettings();
+
+						// Update existing views immediately
+						const leaves = this.app.workspace.getLeavesOfType(INSTANT_DIARY_VIEW_TYPE);
+						for (const leaf of leaves) {
+							if (leaf.view instanceof InstantDiaryView) {
+								leaf.view.onOpen(); // Re-render the view
+							}
+						}
 					});
 			});
 
